@@ -1,0 +1,26 @@
+#!/bin/bash
+
+opendir='issues/open'
+closedir='issues/closed'
+
+cmd="$1"
+
+case "$cmd" in
+'new')
+	issue="$(date +%s)"
+	echo "creating ${issue}"
+	${EDITOR:-vi} "${opendir}/$issue"
+;;
+'close')
+	issue="$2"
+	if test -f "${opendir}/${issue}"
+	then
+		mv -v "${opendir}/${issue}" "${closedir}/${issue}"
+	else
+		echo "issue '${issue}' not found"
+	fi
+;;
+*)
+	echo "invalid command"
+	echo "valid commands are 'new', 'close'"
+esac
