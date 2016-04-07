@@ -20,7 +20,10 @@ case "$cmd" in
 		echo "issue '${issue}' not found"
 	fi
 ;;
+'list')
+	head -n 1 "${opendir}"/*
+;;
 *)
 	echo "invalid command"
-	echo "valid commands are 'new', 'close'"
+	echo "valid commands are 'new', 'close', 'list'"
 esac
