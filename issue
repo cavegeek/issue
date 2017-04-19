@@ -23,7 +23,11 @@ case "$cmd" in
 'list')
 	head -n 1 "${opendir}"/*
 ;;
+'search')
+	searchterm="$2"
+	head -n 1 "${opendir}"/* | grep -i -B 1 "${searchterm}"
+;;
 *)
 	echo "invalid command"
-	echo "valid commands are 'new', 'close', 'list'"
+	echo "valid commands are 'new', 'close', 'list', search"
 esac
