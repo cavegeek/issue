@@ -3,6 +3,8 @@
 opendir='issues/open'
 closedir='issues/closed'
 
+mkdir -pv "${opendir}" "${closedir}"
+
 cmd="$1"
 
 case "$cmd" in
