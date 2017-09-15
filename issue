@@ -5,6 +5,15 @@ closedir='issues/closed'
 
 mkdir -pv "${opendir}" "${closedir}"
 
+function display {
+	local issuefile="$1"
+	if test -r "${issuefile}"
+	then
+		echo "${issuefile}"
+		head "${issuefile}"
+	fi
+}
+
 cmd="$1"
 
 case "$cmd" in
@@ -23,7 +32,11 @@ case "$cmd" in
 	fi
 ;;
 'list')
-	head -n 1 "${opendir}"/*
+	for issuefile in "${opendir}"/*
+	do
+		display "${issuefile}"
+		echo
+	done
 ;;
 'search')
 	searchterm="$2"
