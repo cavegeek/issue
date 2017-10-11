@@ -1,0 +1,88 @@
+#!/bin/bash
+
+opendir='issues/open'
+closedir='issues/closed'
+
+mkdir -pv "${opendir}" "${closedir}"
+
+function display {
+	local issuefile="$1"
+	if test -r "${issuefile}"
+	then
+		echo "$(basename "${issuefile}")"
+		head -n 1 "${issuefile}"
+	fi
+}
+
+current=''
+for issuefile in "${opendir}/*"
+do
+	if test -r "${issuefile}"
+	then
+		current="$(basename "${issuefile}")"
+		break
+	fi
+done
+
+while echo -n "${current}>" && read cmd
+do
+	case "$cmd" in
+	'new')
+		issue="$(date +%s)"
+		echo "creating ${issue}"
+		echo > "${opendir}/${issue}"
+		if test "${current}" != ''
+		then
+			echo "parent: ${current}" > "${opendir}/${issue}"
+		fi
+		${EDITOR:-vi} "${opendir}/$issue"
+		current="${issue}"
+	;;
+	'del')
+		if test "${current}" != ''
+		then
+			echo "no issue selected"
+			break;
+		fi
+		rm -v "${opendir}/${issue}"
+	;;
+	'view')
+		if test -r "${opendir}/${current}"
+		then
+			cat "${opendir}/${current}"
+		fi
+	;;
+	'edit')
+		if test -r "${opendir}/${current}"
+		then
+			${EDITOR:-vi} "${opendir}/${current}"
+		fi
+	;;
+	'close')
+		if test -f "${opendir}/${current}"
+		then
+			mv -v "${opendir}/${current}" "${closedir}/${current}"
+		else
+			echo "issue '${issue}' not found"
+		fi
+	;;
+	'list')
+		for issuefile in "${opendir}"/*
+		do
+			display "${issuefile}"
+			echo
+		done
+	;;
+	'search')
+		searchterm="$2"
+		head -n 1 "${opendir}"/* | grep -i -B 1 "${searchterm}"
+	;;
+	'exit')
+		exit
+	;;
+	*)
+		echo "invalid command"
+		echo "valid commands are 'new', 'view', 'edit', 'close', 'list', 'search', 'exit'"
+
+	esac
+done
