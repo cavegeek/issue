@@ -15,7 +15,7 @@ function display {
 }
 
 current=''
-for issuefile in "${opendir}/*"
+for issuefile in "${opendir}/"*
 do
 	if test -r "${issuefile}"
 	then
